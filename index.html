@@ -1,0 +1,637 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Tarima</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: guía de demo (cartel) a la izquierda + marco de celular con la app a la derecha; en móvil la app ocupa todo el ancho */
+:root{
+  --paper:#F5F3F6; --surface:#FFFFFF; --sunk:#EEEAF0; --ink:#1D1622; --muted:#6B6172; --line:#E2DCE6;
+  --accent:#C21E5B; --accent-ink:#FFFFFF; --tint:#FBE6EE; --sun:#F2B51A; --sun-ink:#2A1F00;
+  --ok:#1D7F55; --ok-tint:#E2F3EA; --warn:#A35F00; --warn-tint:#FBEFD9; --frame:#1D1622;
+  --display:"Archivo","Arial Narrow",Impact,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#141017; --surface:#1E1922; --sunk:#262029; --ink:#F2EDF4; --muted:#A99FAF; --line:#352D3B;
+  --accent:#F0528C; --accent-ink:#1A0610; --tint:#3A1A29; --sun:#F6C445; --sun-ink:#231800;
+  --ok:#55C792; --ok-tint:#16301F; --warn:#E9A640; --warn-tint:#33250F; --frame:#000000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#141017; --surface:#1E1922; --sunk:#262029; --ink:#F2EDF4; --muted:#A99FAF; --line:#352D3B;
+  --accent:#F0528C; --accent-ink:#1A0610; --tint:#3A1A29; --sun:#F6C445; --sun-ink:#231800;
+  --ok:#55C792; --ok-tint:#16301F; --warn:#E9A640; --warn-tint:#33250F; --frame:#000000; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.page{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:48px;align-items:start;
+  padding-block:40px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- Guía ---------- */
+.guide{display:flex;flex-direction:column;gap:28px;min-width:0;position:sticky;top:24px}
+.brand{display:flex;flex-direction:column;gap:10px}
+.word{font-family:var(--display);font-stretch:68%;font-weight:900;font-size:clamp(64px,9vw,112px);line-height:.82;letter-spacing:-.01em;text-transform:uppercase;margin:0}
+.word span{display:inline-block;background:var(--sun);color:var(--sun-ink);padding:0 .08em;margin-left:-.02em}
+.brand p{margin:0;color:var(--muted);max-width:46ch}
+.brand .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.gsec h2{font-family:var(--display);font-stretch:80%;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px;color:var(--muted)}
+.sol{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;padding:0;list-style:none}
+.sol li{display:contents}
+.sol b{font-weight:700}
+.sol span{color:var(--muted)}
+.tour{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none;counter-reset:t}
+.tour button{width:100%;display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.tour button:hover{border-color:var(--accent)}
+.tour .n{font-family:var(--display);font-stretch:70%;font-weight:900;font-size:22px;color:var(--accent);line-height:1}
+.tour .who{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.princ{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.princ div{border-top:3px solid var(--sun);padding-top:8px}
+.princ b{display:block;font-size:14px}
+.princ span{font-size:13px;color:var(--muted)}
+.gfoot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:12.5px;color:var(--muted)}
+
+/* ---------- Escenario / celular ---------- */
+.stage{display:flex;flex-direction:column;gap:14px;align-items:center;min-width:0}
+.seg{display:inline-flex;background:var(--sunk);border-radius:999px;padding:4px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:999px;padding:7px 14px;font-weight:600;font-size:13.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seglabel{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.phone{position:relative;width:100%;max-width:400px;height:820px;border:10px solid var(--frame);border-radius:46px;overflow:hidden;background:var(--paper);box-shadow:0 30px 60px -30px rgba(29,22,34,.45)}
+.app{height:100%;display:flex;flex-direction:column}
+.ahead{display:flex;flex-direction:column;gap:10px;padding:18px 18px 12px;background:var(--surface);border-bottom:1px solid var(--line)}
+.arow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mini{font-family:var(--display);font-stretch:68%;font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:.01em}
+.mini i{font-style:normal;background:var(--sun);color:var(--sun-ink);padding:0 3px}
+.me{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.av{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:13px}
+.av.lg{width:64px;height:64px;font-size:22px;font-family:var(--display);font-stretch:75%;font-weight:800}
+.av.alt{background:var(--sun);color:var(--sun-ink)}
+.av.inv{background:var(--ink);color:var(--paper)}
+.personas{display:flex;gap:6px;overflow-x:auto}
+.personas button{flex:none;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600}
+.personas button[aria-pressed="true"]{border-color:var(--accent);background:var(--tint);color:var(--accent)}
+.screen{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.tabbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface);border-top:1px solid var(--line);padding:6px 6px calc(10px + env(safe-area-inset-bottom,0px))}
+.tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:11.5px;font-weight:600;color:var(--muted);border-radius:10px}
+.tabbar button[aria-current="page"]{color:var(--accent)}
+.ic svg,svg.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic svg.fill{fill:currentColor;stroke:none}
+
+/* ---------- Componentes ---------- */
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.h{font-family:var(--display);font-stretch:78%;font-weight:800;font-size:26px;line-height:1.02;margin:2px 0 0;text-wrap:balance}
+.sub{color:var(--muted);font-size:13.5px;margin:4px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card.flat{background:transparent;border-style:dashed}
+.row{display:flex;align-items:center;gap:10px;min-width:0}
+.row.sb{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.t{font-weight:700;font-size:15px;line-height:1.25}
+.m{color:var(--muted);font-size:13px}
+.num{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:600;background:var(--sunk);color:var(--ink);border:0}
+.chip svg{width:14px;height:14px}
+.chip.ok{background:var(--ok-tint);color:var(--ok)}
+.chip.warn{background:var(--warn-tint);color:var(--warn)}
+.chip.acc{background:var(--tint);color:var(--accent)}
+.chip.sun{background:var(--sun);color:var(--sun-ink)}
+button.chip{cursor:pointer;border:1px solid transparent}
+button.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;padding:11px 14px;font-weight:700;font-size:14px;border:1px solid var(--line);background:var(--surface)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:10px}
+.btn.done{background:var(--ok-tint);border-color:transparent;color:var(--ok)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bar{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.svc{display:flex;flex-direction:column}
+.svc div{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.svc div:first-child{border-top:0}
+.svc .num{white-space:nowrap;text-align:right}
+.banner{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600}
+.banner button{background:transparent;border:1px solid currentColor;color:inherit;border-radius:8px;padding:4px 8px;font-size:12px}
+.switch{position:relative;width:44px;height:26px;border-radius:99px;border:0;background:var(--line);flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--surface);transition:transform .2s}
+.switch[aria-checked="true"]{background:var(--ok)}
+.switch[aria-checked="true"]::after{transform:translateX(18px)}
+.player{display:flex;align-items:center;gap:12px;background:var(--sunk);border-radius:12px;padding:10px}
+.pbtn{width:40px;height:40px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.wave{flex:1;display:flex;align-items:center;gap:2px;height:34px;min-width:0}
+.wave i{flex:1;background:var(--muted);border-radius:2px;opacity:.55}
+.wave.on i{background:var(--accent);opacity:1;animation:wv 1s ease-in-out infinite alternate}
+.wave.on i:nth-child(3n){animation-delay:.2s}.wave.on i:nth-child(4n){animation-delay:.45s}
+@keyframes wv{to{transform:scaleY(.45)}}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.gallery div{aspect-ratio:4/5;border-radius:8px;max-width:100%}
+.vid{aspect-ratio:16/9;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#3a1428,#7a1d45 55%,#e0a020);color:#fff;position:relative;max-width:100%}
+.vid span{position:absolute;right:10px;bottom:8px;font-family:var(--mono);font-size:11px}
+.vid .pbtn{background:rgba(255,255,255,.92);color:#1D1622}
+.req{display:flex;flex-direction:column;gap:4px;font-size:13px}
+.req div{display:flex;gap:6px;align-items:center}
+.req .y{color:var(--ok)}.req .n{color:var(--warn)}
+.req svg{width:16px;height:16px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.day{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted)}
+.day b{font-family:var(--display);font-stretch:75%;font-size:20px;color:var(--ink);line-height:1}
+.day.busy{background:var(--sunk);border-color:transparent;cursor:not-allowed}
+.day.sel{border:2px solid var(--accent);color:var(--accent)}
+.day.pub{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.day.pub b{color:var(--accent-ink)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.check{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none;padding:0;color:var(--accent-ink)}
+.check svg{width:16px;height:16px;stroke-width:3}
+.check[aria-checked="true"]{background:var(--accent);border-color:var(--accent)}
+.stars{display:flex;gap:2px}
+.stars button{border:0;background:transparent;padding:2px;color:var(--line)}
+.stars button.on{color:var(--sun)}
+.stars svg{width:26px;height:26px;fill:currentColor;stroke:none}
+.rate{display:inline-flex;align-items:center;gap:3px;font-size:13px;font-weight:700}
+.rate svg{width:14px;height:14px;fill:var(--sun);stroke:none}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12.5px;font-weight:700}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 11px;font-size:14px}
+.field textarea{resize:vertical;min-height:70px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{background:var(--warn-tint);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px}
+.hint b{color:var(--warn)}
+.note{background:var(--sunk);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted)}
+.tw{overflow-x:auto;margin:0 -2px}
+table.cmp{border-collapse:separate;border-spacing:0;font-size:13px;min-width:100%}
+table.cmp th,table.cmp td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;min-width:116px}
+table.cmp th:first-child,table.cmp td:first-child{min-width:88px;color:var(--muted);font-weight:600;position:sticky;left:0;background:var(--surface)}
+table.cmp thead th{font-weight:800}
+table.cmp .best{color:var(--ok);font-weight:700}
+.empty{text-align:center;padding:28px 16px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty .ic svg{width:34px;height:34px;color:var(--muted)}
+.res{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ok);font-weight:600}
+.res svg{width:15px;height:15px;stroke-width:2.5}
+
+/* sheet + toast */
+.scrim{position:absolute;inset:0;background:rgba(20,16,23,.45);display:flex;align-items:flex-end;z-index:20}
+.sheet{background:var(--surface);width:100%;max-height:88%;overflow-y:auto;border-radius:22px 22px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;animation:up .22s ease-out}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 4px}
+@keyframes up{from{transform:translateY(30px);opacity:.5}}
+.toast{position:absolute;left:14px;right:14px;bottom:86px;background:var(--ink);color:var(--paper);border-radius:12px;padding:12px 14px;font-size:13.5px;font-weight:600;display:flex;gap:8px;align-items:center;z-index:30;animation:up .2s ease-out}
+.toast svg{color:var(--sun);stroke-width:2.6}
+.pdf{background:#fff;color:#1D1622;border-radius:6px;padding:18px;box-shadow:0 8px 24px -10px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:8px;font-size:11.5px}
+.pdf h4{margin:0;font-family:var(--display);font-stretch:75%;font-size:22px;text-transform:uppercase;line-height:1}
+.pdf .bar2{height:4px;background:#C21E5B;width:48px}
+.pdf .qr{width:52px;height:52px;background:repeating-conic-gradient(#1D1622 0 25%,#fff 0 50%) 0 0/13px 13px;border:3px solid #1D1622;flex:none}
+.pdf .l{display:flex;justify-content:space-between;border-top:1px solid #e5e0e8;padding-top:5px}
+
+#phone svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;width:18px;height:18px;flex:none}
+#phone .ic svg{width:20px;height:20px}
+#phone svg.fill{fill:currentColor;stroke:none}
+#phone .rate svg{fill:var(--sun);stroke:none;width:14px;height:14px}
+#phone .stars svg{fill:currentColor;stroke:none;width:26px;height:26px}
+#phone .chip svg{width:14px;height:14px}
+#phone .check svg{width:16px;height:16px;stroke-width:3}
+#phone .toast svg{color:var(--sun);stroke-width:2.6}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:900px){
+  .page{grid-template-columns:minmax(0,1fr);gap:28px;padding-block:20px 40px}
+  .stage{order:-1}
+  .guide{position:static}
+}
+@media (max-width:520px){
+  .phone{border:0;border-radius:16px;height:min(780px,calc(100dvh - 120px));box-shadow:none;border:1px solid var(--line)}
+}
+</style>
+
+<div class="page">
+  <aside class="guide" aria-label="Guía de la demo">
+    <div class="brand">
+      <div class="kicker">Reto 4 · Comfama · Cátedra Industrias TI</div>
+      <h1 class="word">Tari<span>ma</span></h1>
+      <p>Prototipo navegable del ecosistema para artistas independientes del Valle de Aburrá. Une en una sola app las tres soluciones priorizadas en la fase de ideación.</p>
+    </div>
+
+    <section class="gsec">
+      <h2>Qué hay adentro</h2>
+      <ul class="sol">
+        <li><b>Vitrina Artística Conecta</b><span>Portafolio, vista de contratante y PDF</span></li>
+        <li><b>Circuito Cultural Abierto</b><span>Fechas de espacios y comparación de artistas</span></li>
+        <li><b>ArteDirecto Conecta</b><span>Requerimientos, cotizaciones y contratación</span></li>
+        <li><b>ImpulsoLab Rutas</b><span>Rutas cortas que terminan en un producto</span></li>
+      </ul>
+    </section>
+
+    <section class="gsec">
+      <h2>Recorrido sugerido para la demo</h2>
+      <ol class="tour">
+        <li><button data-a="go" data-v="artista|mateo|perfil"><span class="n">1</span><span>Arma el portafolio y míralo como lo ve un contratante</span><span class="who">Mateo</span></button></li>
+        <li><button data-a="go" data-v="artista|mateo|oportunidades"><span class="n">2</span><span>Filtra oportunidades y postúlate con requisitos claros</span><span class="who">Mateo</span></button></li>
+        <li><button data-a="go" data-v="espacio||agenda"><span class="n">3</span><span>Publica fechas libres y compara postulaciones</span><span class="who">Carlos</span></button></li>
+        <li><button data-a="go" data-v="cliente||requerimiento"><span class="n">4</span><span>Publica un requerimiento y compara 3 propuestas</span><span class="who">Laura</span></button></li>
+        <li><button data-a="go" data-v="artista|valeria|solicitudes"><span class="n">5</span><span>Responde una cotización y suma un colaborador</span><span class="who">Valeria</span></button></li>
+        <li><button data-a="go" data-v="artista|sofia|ruta"><span class="n">6</span><span>Completa su ruta y publica el taller</span><span class="who">Sofía</span></button></li>
+      </ol>
+    </section>
+
+    <section class="gsec">
+      <h2>Principios del journey map</h2>
+      <div class="princ">
+        <div><b>Confianza</b><span>Perfiles y valoraciones verificables</span></div>
+        <div><b>Simplicidad</b><span>Registro corto, pensado para celular</span></div>
+        <div><b>Doble vía</b><span>Artistas, espacios y clientes publican</span></div>
+        <div><b>Resultados concretos</b><span>PDF, cotizaciones y rutas usables</span></div>
+      </div>
+    </section>
+
+    <div class="gfoot">
+      <button class="btn sm" data-a="reset">Reiniciar demo</button>
+      <span>Todos los datos son de ejemplo. Pagos integrados quedan para la fase 2.</span>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <span class="seglabel">Ver como</span>
+    <div class="seg" id="roles" role="group" aria-label="Rol"></div>
+    <div class="phone" id="phone">
+      <div class="app" id="app"></div>
+      <div id="layer"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const I={
+ user:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+ target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>',
+ inbox:'<svg viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1 3h6l1-3h5"/></svg>',
+ route:'<svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg>',
+ cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+ users:'<svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"/><circle cx="17" cy="8" r="2.5"/><path d="M17 13c2.5 0 4 1.5 4.8 4"/></svg>',
+ star:'<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+ search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg>',
+ plus:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+ cols:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/></svg>',
+ check:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+ x:'<svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+ shield:'<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
+ play:'<svg viewBox="0 0 24 24" class="fill"><path d="M8 5v14l11-7z"/></svg>',
+ pause:'<svg viewBox="0 0 24 24" class="fill"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+ doc:'<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></svg>',
+ eye:'<svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+ bolt:'<svg viewBox="0 0 24 24"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg>',
+ bell:'<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg>'
+};
+const ic=k=>`<span class="ic">${I[k]}</span>`;
+const cop=n=>'$'+Math.round(n).toLocaleString('es-CO');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rate=(r,k)=>`<span class="rate">${I.star}${r.toFixed(1)}${k?` <span class="m" style="font-weight:500">(${k})</span>`:''}</span>`;
+
+/* ---------- Datos de ejemplo (personas de la fase de diseño) ---------- */
+const ART={
+ mateo:{nombre:'Mateo Martínez',ini:'MM',disc:'Música',rol:'Cantante y productor',lugar:'Medellín · Comuna 13',comp:80,falta:'Agrega un video en vivo de 1 minuto',
+   muestra:'"Ladera", sencillo · 2:48',tags:['Urbano','Acústico','Producción musical'],
+   svc:[['Set acústico (45 min)','$600.000 – $1.200.000'],['Producción de pista','$350.000 – $700.000']]},
+ valeria:{nombre:'Valeria Ríos',ini:'VR',disc:'Artes plásticas',rol:'Pintora e ilustradora',lugar:'Envigado',comp:90,falta:'Agrega las medidas de tus obras',
+   muestra:'Serie "Quebradas" · 6 obras',tags:['Mural','Acrílico','Ilustración'],
+   svc:[['Mural por encargo','$180.000 – $260.000 / m²'],['Obra original 60×80 cm','$1.400.000'],['Ilustración editorial','$250.000 – $500.000']]},
+ sofia:{nombre:'Sofía Benítez',ini:'SB',disc:'Danza',rol:'Bailarina e instructora',lugar:'Bello',comp:65,falta:'Publica tus horarios de clase',
+   muestra:'Taller de salsa caleña · 0:58',tags:['Salsa','Folclor','Talleres'],
+   svc:[['Taller grupal (2 h, hasta 20 personas)','$400.000 – $700.000'],['Clase semanal','$120.000 / persona al mes']]}
+};
+const OPP=[
+ {id:'o1',tipo:'Convocatoria',t:'Noches de Patio: música en vivo',org:'La Bodega Café-Teatro · Laureles',cierre:'28 oct',disc:['Música'],pago:'$800.000 + 20 % de taquilla',req:[['Portafolio con audio',1],['Disponible los viernes',1],['Rider técnico',0]]},
+ {id:'o2',tipo:'Encargo',t:'Show para cierre de año corporativo',org:'Laura Gómez · Eventos corporativos',cierre:'5 nov',disc:['Música','Danza'],pago:'Presupuesto $1,5 M – $3 M',req:[['Perfil verificado',1],['Repertorio de 45 min',1]]},
+ {id:'o3',tipo:'Espacio',t:'Sala para ensayos y talleres, sábados',org:'Casa Cultural El Ágora · Bello',cierre:'Abierta',disc:['Danza','Música'],pago:'Uso sin costo a cambio de 1 función',req:[['Propuesta de taller',1]]},
+ {id:'o4',tipo:'Convocatoria',t:'Feria de arte local: 12 cupos',org:'Corporación Mural Sur · Envigado',cierre:'2 nov',disc:['Artes plásticas'],pago:'Stand sin costo, venta directa',req:[['3 obras disponibles',1],['Fotos en alta resolución',1]]},
+ {id:'o5',tipo:'Encargo',t:'Mural de 12 m² para restaurante',org:'Fogón 70 · Laureles',cierre:'10 nov',disc:['Artes plásticas'],pago:'$2,2 M – $3 M',req:[['Portafolio de murales',1],['Boceto previo',0]]},
+ {id:'o6',tipo:'Convocatoria',t:'Circuito de danza en parques',org:'Red de espacios culturales del Aburrá',cierre:'8 nov',disc:['Danza'],pago:'$350.000 por función',req:[['Video de 1 min',1],['Grupo de 2 o más',0]]}
+];
+const REQS={
+ mateo:[{id:'q1',cli:'Laura Gómez',crol:'Organizadora de eventos corporativos',ini:'LG',prev:4,r:4.8,t:'Set acústico para evento de fin de año',d:'120 asistentes · El Poblado · 12 dic · 45 min',ref:[900000,1800000],min:1000000,max:1400000,inc:'Set de 45 min, sonido propio para 120 personas, prueba de sonido 1 h antes.'}],
+ valeria:[{id:'q2',cli:'Fogón 70',crol:'Restaurante · Laureles',ini:'F7',prev:2,r:4.6,t:'Mural de 12 m² en la terraza',d:'Laureles · inicio 18 nov · tema: fauna del Aburrá',ref:[2100000,3100000],min:2400000,max:2900000,inc:'Boceto con 2 revisiones, materiales para exterior y barniz protector.'},
+          {id:'q3',cli:'Laura Gómez',crol:'Organizadora de eventos corporativos',ini:'LG',prev:4,r:4.8,t:'Pintura en vivo durante evento',d:'3 horas · El Poblado · 12 dic',ref:[500000,1200000],min:700000,max:950000,inc:'Obra de 80×100 cm pintada en vivo; queda para la empresa.'}],
+ sofia:[{id:'q4',cli:'Laura Gómez',crol:'Organizadora de eventos corporativos',ini:'LG',prev:4,r:4.8,t:'Taller de salsa para equipo de trabajo',d:'20 personas · 2 h · El Poblado · 28 nov',ref:[400000,900000],min:550000,max:700000,inc:'Taller de 2 h, música y parlante, certificado de participación.'}]
+};
+const GOALS={
+ monetizar:{l:'Monetizar mis clases',mods:[['Ponle precio a tu clase',10,'Plan de costos'],['Describe tu taller en 3 frases',8,'Descripción del taller'],['Arma tu calendario de cupos',10,'Horario de clases'],['Becas y financiamiento para emprender',12,'3 convocatorias para ti']]},
+ convocatorias:{l:'Ganar convocatorias',mods:[['Lee una convocatoria en 5 minutos',6,'Checklist de requisitos'],['Arma tu rider técnico',10,'Rider técnico en PDF'],['Escribe tu propuesta artística',12,'Borrador de propuesta'],['Presupuesto básico de un show',10,'Plantilla de presupuesto']]},
+ promocion:{l:'Promocionar mi trabajo',mods:[['Fotografía tus obras con el celular',8,'Guía de fotos'],['Define tus precios por encargo',10,'Tabla de precios'],['Cuenta tu obra en 60 palabras',6,'Statement artístico'],['Derechos de autor para artistas visuales',12,'Modelo de contrato']]}
+};
+const SPACE={n:'La Bodega Café-Teatro',l:'Laureles, Medellín',aforo:80,eq:['Sonido básico','Tarima 4×3 m','Luz cálida','Camerino']};
+const DAYS=[['Lun',3,'busy'],['Mar',4,'free'],['Mié',5,'busy'],['Jue',6,'free'],['Vie',7,'pub'],['Sáb',8,'busy'],['Dom',9,'free']];
+const APPS=[
+ {id:'a1',n:'Mateo Martínez',ini:'MM',d:'Música urbana acústica',tarifa:800000,pub:60,punt:4.9,rider:'Sí',ev:12},
+ {id:'a2',n:'Dúo Ladera Sur',ini:'LS',d:'Bambuco y jazz',tarifa:1000000,pub:45,punt:4.6,rider:'Sí',ev:22},
+ {id:'a3',n:'Colectivo Tumbao',ini:'CT',d:'Salsa en pareja',tarifa:700000,pub:70,punt:4.4,rider:'No',ev:15},
+ {id:'a4',n:'Ana Restrepo Trío',ini:'AR',d:'Jazz latino',tarifa:1200000,pub:35,punt:4.8,rider:'Sí',ev:30}
+];
+const CAT=[
+ {n:'Mateo Martínez',ini:'MM',d:'Música',l:'Comuna 13',p:600000,r:4.9,k:18},
+ {n:'Valeria Ríos',ini:'VR',d:'Artes plásticas',l:'Envigado',p:700000,r:4.8,k:11},
+ {n:'Sofía Benítez',ini:'SB',d:'Danza',l:'Bello',p:400000,r:4.7,k:9},
+ {n:'Dúo Ladera Sur',ini:'LS',d:'Música',l:'Belén',p:1000000,r:4.6,k:22},
+ {n:'Colectivo Tumbao',ini:'CT',d:'Danza',l:'Itagüí',p:700000,r:4.4,k:15},
+ {n:'Ana Restrepo Trío',ini:'AR',d:'Música',l:'El Poblado',p:1200000,r:4.8,k:30},
+ {n:'Tomás Arango',ini:'TA',d:'Artes plásticas',l:'Itagüí',p:500000,r:4.5,k:7},
+ {n:'Compañía Raíz',ini:'CR',d:'Danza',l:'Sabaneta',p:2200000,r:4.9,k:12}
+];
+const ACT={
+ show:{l:'Show musical en vivo',ref:[900000,1800000],props:[
+   {n:'Mateo Martínez',ini:'MM',p:1200000,dur:'45 min',inc:'Sonido propio, prueba 1 h antes',r:4.9,trab:18,resp:'2 h'},
+   {n:'Ana Restrepo Trío',ini:'AR',p:1750000,dur:'60 min',inc:'Trío + sonido, repertorio a la medida',r:4.8,trab:30,resp:'5 h'},
+   {n:'Dúo Ladera Sur',ini:'LS',p:1100000,dur:'45 min',inc:'Sin sonido; requiere parlante del lugar',r:4.6,trab:22,resp:'1 día'}]},
+ taller:{l:'Taller de danza para equipo',ref:[400000,900000],props:[
+   {n:'Sofía Benítez',ini:'SB',p:650000,dur:'2 h',inc:'Música y parlante, certificado',r:4.7,trab:9,resp:'1 h'},
+   {n:'Colectivo Tumbao',ini:'CT',p:800000,dur:'2 h',inc:'2 instructores, música',r:4.4,trab:15,resp:'6 h'},
+   {n:'Compañía Raíz',ini:'CR',p:1500000,dur:'2 h + muestra',inc:'3 instructores, cierre con muestra',r:4.9,trab:12,resp:'1 día'}]},
+ vivo:{l:'Pintura en vivo',ref:[500000,1200000],props:[
+   {n:'Valeria Ríos',ini:'VR',p:900000,dur:'3 h',inc:'Obra de 80×100 cm para la empresa',r:4.8,trab:11,resp:'3 h'},
+   {n:'Tomás Arango',ini:'TA',p:650000,dur:'3 h',inc:'Obra de 60×80 cm',r:4.5,trab:7,resp:'8 h'},
+   {n:'Colectivo Muro Vivo',ini:'MV',p:1150000,dur:'4 h',inc:'Mural portátil de 2×1 m',r:4.6,trab:14,resp:'1 día'}]}
+};
+const ROLES=[['artista','Artista'],['espacio','Espacio cultural'],['cliente','Cliente']];
+const TABS={
+ artista:[['perfil','Perfil','user'],['oportunidades','Oportunidades','target'],['solicitudes','Cotizaciones','inbox'],['ruta','Mi ruta','route']],
+ espacio:[['agenda','Agenda','cal'],['postulaciones','Postulaciones','users'],['eventos','Eventos','star']],
+ cliente:[['explorar','Explorar','search'],['requerimiento','Publicar','plus'],['propuestas','Propuestas','cols']]
+};
+
+/* ---------- Estado ---------- */
+let S;
+function fresh(){return{role:'artista',artist:'mateo',tab:{artista:'perfil',espacio:'agenda',cliente:'explorar'},
+ preview:false,avail:true,playing:false,oppf:'Todas',post:{},cot:{},colab:false,
+ goal:{mateo:'convocatorias',valeria:'promocion',sofia:'monetizar'},done:{sofia:{monetizar0:true}},fixed:{},taller:false,
+ days:DAYS.map(d=>d[2]),prog:{'Música acústica':1,'Danza':1,'Stand-up':0,'Exposición':0},pick:{},conf:null,ratings:{},
+ catf:'Todas',budget:3000000,q:'',form:{act:'show',fecha:'2026-12-12',lugar:'El Poblado, Medellín',pub:120,min:900000,max:1800000,desc:'Show para el cierre de año de la empresa, ambiente tranquilo durante la cena.'},
+ reqPub:false,chosen:null,booked:false}}
+S=fresh();
+
+/* ---------- Render ---------- */
+const app=document.getElementById('app'),layer=document.getElementById('layer');
+function render(keepScroll){
+ const sc=document.getElementById('screen'),top=keepScroll&&sc?sc.scrollTop:0;
+ document.getElementById('roles').innerHTML=ROLES.map(([k,l])=>`<button data-a="role" data-v="${k}" aria-pressed="${S.role===k}">${l}</button>`).join('');
+ app.innerHTML=head()+`<div class="screen" id="screen">${screen()}</div>`+tabbar();
+ document.getElementById('screen').scrollTop=top;
+}
+function head(){
+ let who='',extra='';
+ if(S.role==='artista'){const a=ART[S.artist];who=`<span class="av">${a.ini}</span>`;
+   extra=`<div class="personas" role="group" aria-label="Artista">${Object.entries(ART).map(([k,a])=>`<button data-a="persona" data-v="${k}" aria-pressed="${S.artist===k}">${a.nombre.split(' ')[0]} · ${a.disc}</button>`).join('')}</div>`;}
+ if(S.role==='espacio') who=`<span class="m">Carlos Montoya</span><span class="av alt">CM</span>`;
+ if(S.role==='cliente') who=`<span class="m">Laura Gómez</span><span class="av inv">LG</span>`;
+ return `<div class="ahead"><div class="arow"><span class="mini">Tari<i>ma</i></span><span class="me">${ic('bell')}${who}</span></div>${extra}</div>`;
+}
+function tabbar(){const cur=S.tab[S.role];return `<nav class="tabbar" aria-label="Secciones">${TABS[S.role].map(([k,l,i])=>`<button data-a="tab" data-v="${k}" ${cur===k?'aria-current="page"':''}>${ic(i)}${l}</button>`).join('')}</nav>`}
+function screen(){return ({perfil,oportunidades,solicitudes,ruta,agenda,postulaciones,eventos,explorar,requerimiento,propuestas})[S.tab[S.role]]()}
+const title=(eb,h,sub)=>`<div><div class="eyebrow">${eb}</div><h2 class="h">${h}</h2>${sub?`<p class="sub">${sub}</p>`:''}</div>`;
+
+/* ---------- Artista ---------- */
+function muestra(a){
+ if(a.disc==='Música'){const hs=[30,55,40,80,62,90,48,70,35,85,60,95,52,74,40,66,88,45,70,58,36,82,64,50,76,42,68,90,54,38];
+  return `<div class="player"><button class="pbtn" data-a="play" aria-label="${S.playing?'Pausar':'Reproducir'}">${S.playing?I.pause:I.play}</button><div class="grow"><div class="wave ${S.playing?'on':''}">${hs.map(h=>`<i style="height:${h}%"></i>`).join('')}</div><div class="num m">${a.muestra}</div></div></div>`;}
+ if(a.disc==='Artes plásticas'){const g=['linear-gradient(160deg,#1f5f4a,#9fc58b)','linear-gradient(200deg,#c2461e,#f3c26b)','linear-gradient(140deg,#24345c,#6f8fc9 60%,#f0d39a)','linear-gradient(180deg,#5a2a52,#d0768f)','linear-gradient(120deg,#2b5d2e,#d8b54a)','linear-gradient(160deg,#103b5c,#57a7b3)'];
+  return `<div class="gallery">${g.map(x=>`<div style="background:${x}"></div>`).join('')}</div><div class="num m">${a.muestra}</div>`;}
+ return `<div class="vid"><button class="pbtn" data-a="toast" data-v="Reproduciendo clip de 58 s" aria-label="Reproducir">${I.play}</button><span>0:58</span></div><div class="num m">${a.muestra}</div>`;
+}
+function perfil(){
+ const a=ART[S.artist],pv=S.preview;
+ return `${pv?`<div class="banner"><span>${ic('eye')} Así te ve un contratante</span><button data-a="preview">Volver a editar</button></div>`:''}
+ ${title('Vitrina Artística Conecta',pv?'Perfil público':'Tu portafolio',pv?'':`Plantilla de ${a.disc.toLowerCase()} aplicada`)}
+ <div class="card">
+  <div class="row"><span class="av lg">${a.ini}</span><div class="grow"><div class="t" style="font-size:18px">${a.nombre}</div><div class="m">${a.rol} · ${a.lugar}</div>
+   <div class="chips" style="margin-top:6px"><span class="chip ok">${I.shield}Identidad verificada</span>${pv?(S.avail?'<span class="chip acc">Disponible</span>':'<span class="chip">No disponible</span>'):''}</div></div></div>
+  ${pv?'':`<div class="row sb"><span style="font-size:14px;font-weight:600">Disponible para contrataciones</span><button class="switch" role="switch" aria-checked="${S.avail}" aria-label="Disponibilidad" data-a="avail"></button></div>
+  <div><div class="row sb" style="margin-bottom:6px"><span class="m">Perfil completo</span><span class="num">${a.comp} %</span></div><div class="bar"><i style="width:${a.comp}%"></i></div><div class="m" style="margin-top:6px">Siguiente paso: ${a.falta}</div></div>`}
+ </div>
+ <div class="card"><div class="row sb"><span class="t">Muestra destacada</span>${pv?'':'<span class="m">Se escucha en menos de 10 s</span>'}</div>${muestra(a)}</div>
+ <div class="card"><span class="t">Servicios y rangos de precio</span><div class="svc">${a.svc.map(s=>`<div><span>${s[0]}</span><span class="num">${s[1]}</span></div>`).join('')}</div>
+  <div class="chips">${a.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div></div>
+ ${pv?`<div class="card"><div class="row">${rate(4.8,'12 trabajos verificados')}</div><div class="m">"Llegó puntual y el público se quedó hasta el final." — La Bodega Café-Teatro</div></div>
+  <button class="btn pri" data-a="toast" data-v="Solicitud de cotización enviada a ${a.nombre.split(' ')[0]}">Solicitar cotización</button>`
+ :`<div class="btns"><button class="btn" data-a="preview">${ic('eye')}Ver como contratante</button><button class="btn dark" data-a="pdf">${ic('doc')}Portafolio PDF</button></div>`}`;
+}
+function oportunidades(){
+ const a=ART[S.artist],types=['Todas','Convocatoria','Espacio','Encargo'];
+ const list=OPP.filter(o=>o.disc.includes(a.disc)&&(S.oppf==='Todas'||o.tipo===S.oppf));
+ return `${title('Vitrina Conecta + Circuito Abierto','Oportunidades para ti',`Recomendadas según tu perfil de ${a.disc.toLowerCase()} y tu ubicación`)}
+ <div class="chips">${types.map(t=>`<button class="chip" data-a="oppf" data-v="${t}" aria-pressed="${S.oppf===t}">${t}</button>`).join('')}</div>
+ ${list.length?list.map(o=>{const met=o.req.filter(r=>r[1]||S.fixed[o.id]).length,all=met===o.req.length,done=S.post[o.id];
+  return `<div class="card"><div class="row sb"><span class="chip ${o.tipo==='Encargo'?'sun':o.tipo==='Espacio'?'':'acc'}">${o.tipo}</span><span class="num m">Cierra: ${o.cierre}</span></div>
+  <div><div class="t">${o.t}</div><div class="m">${o.org}</div></div>
+  <div class="num">${o.pago}</div>
+  <div class="req"><div><span class="chip ${all?'ok':'warn'}">Cumples ${met} de ${o.req.length} requisitos</span></div>${o.req.map(r=>`<div class="${r[1]||S.fixed[o.id]?'y':'n'}">${r[1]||S.fixed[o.id]?I.check:I.x}<span style="color:var(--ink)">${r[0]}</span></div>`).join('')}</div>
+  ${done?`<button class="btn done" disabled>${ic('check')}Postulación enviada con tu portafolio</button>`:all?`<button class="btn pri" data-a="postular" data-v="${o.id}">Postularme con mi portafolio</button>`:`<button class="btn" data-a="falta" data-v="${o.id}">Completar requisito y postularme</button>`}</div>`}).join('')
+ :`<div class="card flat empty">${ic('target')}<span class="m">No hay oportunidades de este tipo para ${a.disc.toLowerCase()} esta semana.</span></div>`}`;
+}
+function solicitudes(){
+ const rs=REQS[S.artist],a=ART[S.artist];
+ let colab='';
+ if(S.artist==='valeria') colab=`<div class="card"><div class="row sb"><span class="eyebrow">CoCrea Proyectos</span><span class="chip">Tu proyecto</span></div>
+  <div class="t">Quebradas en vivo: pintura + música</div><div class="m">Buscas: 1 músico, 1 bailarín</div>
+  ${S.colab?`<div class="row"><span class="av">MM</span><div class="grow"><div class="t" style="font-size:14px">Mateo Martínez se unió como músico</div><div class="m">Falta: 1 bailarín</div></div></div>`
+  :`<div class="row"><span class="av">MM</span><div class="grow"><div class="t" style="font-size:14px">Mateo Martínez quiere unirse</div><div class="m">Cantante y productor · ${rate(4.9)}</div></div></div><button class="btn dark sm" data-a="colab">Aceptar colaborador</button>`}</div>`;
+ return `${title('ArteDirecto Conecta','Solicitudes de cotización','Cada solicitud muestra quién la envía y su historial')}
+ ${rs.map(q=>{const c=S.cot[q.id];return `<div class="card">
+  <div class="row"><span class="av inv">${q.ini}</span><div class="grow"><div class="t" style="font-size:14px">${q.cli}</div><div class="m">${q.crol}</div></div></div>
+  <div class="chips"><span class="chip ok">${I.shield}Credencial verificada</span><span class="chip">${q.prev} contrataciones previas</span>${rate(q.r)}</div>
+  <div><div class="t">${q.t}</div><div class="m">${q.d}</div></div>
+  ${c?`<div class="row sb"><span class="chip ok">${I.check}Propuesta enviada</span><span class="num">${cop(c.min)} – ${cop(c.max)}</span></div>`
+  :`<button class="btn pri" data-a="cotizar" data-v="${q.id}">Responder con presupuesto</button>`}</div>`}).join('')}
+ ${colab}`;
+}
+function ruta(){
+ const g=S.goal[S.artist],G=GOALS[g],d=(S.done[S.artist]||{}),isDone=i=>!!d[g+i],n=G.mods.filter((_,i)=>isDone(i)).length;
+ const left=G.mods.reduce((s,m,i)=>s+(isDone(i)?0:m[1]),0);
+ return `${title('ImpulsoLab Rutas','¿Qué quieres lograr?','Tu ruta cambia según la meta. Cada actividad deja algo que puedes usar.')}
+ <div class="chips">${Object.entries(GOALS).map(([k,v])=>`<button class="chip" data-a="goal" data-v="${k}" aria-pressed="${g===k}">${v.l}</button>`).join('')}</div>
+ <div class="card"><div class="row sb"><span class="t">Tu ruta</span><span class="num">${n} de ${G.mods.length} · ${left} min restantes</span></div><div class="bar"><i style="width:${n/G.mods.length*100}%"></i></div></div>
+ ${G.mods.map((m,i)=>`<div class="card"><div class="row"><button class="check" role="checkbox" aria-checked="${isDone(i)}" aria-label="Marcar actividad" data-a="mod" data-v="${i}">${isDone(i)?I.check:''}</button>
+  <div class="grow"><div class="t" style="font-size:14.5px">${m[0]}</div><div class="m">${m[1]} min · desde el celular${i===3&&g==='monetizar'?' · con programas de Comfama y la Alcaldía':''}</div></div></div>
+  ${isDone(i)?`<div class="res">${I.check}Resultado listo: ${m[2]}</div>`:`<div class="m">Al terminar obtienes: <b style="color:var(--ink)">${m[2]}</b></div>`}</div>`).join('')}
+ ${g==='monetizar'?(S.taller?`<div class="card"><span class="eyebrow">Publicado en ArteDirecto Conecta</span><div class="t">Taller de salsa caleña</div><div class="m">Sábados 10:00 a. m. · Bello · $120.000 al mes</div><div><div class="row sb" style="margin-bottom:6px"><span class="m">Cupos</span><span class="num">12 de 20</span></div><div class="bar"><i style="width:60%"></i></div></div></div>`
+  :`<button class="btn pri" data-a="taller" ${n<G.mods.length?'disabled':''}>Publicar mi taller en ArteDirecto</button>${n<G.mods.length?'<p class="m" style="margin:0;text-align:center">Se habilita al completar la ruta</p>':''}`):''}`;
+}
+
+/* ---------- Espacio ---------- */
+function agenda(){
+ const sel=S.days.filter(x=>x==='sel').length;
+ return `${title('Circuito Cultural Abierto','Tu espacio')}
+ <div class="card"><div class="row"><span class="av alt">LB</span><div class="grow"><div class="t">${SPACE.n}</div><div class="m">${SPACE.l} · aforo ${SPACE.aforo}</div></div><span class="chip ok">${I.shield}Verificado</span></div>
+  <div class="chips">${SPACE.eq.map(e=>`<span class="chip">${e}</span>`).join('')}</div></div>
+ <div class="card"><div class="row sb"><span class="t">Semana del 3 al 9 de noviembre</span></div>
+  <div class="week">${DAYS.map((d,i)=>{const st=S.days[i];return `<button class="day ${st}" data-a="day" data-v="${i}" ${st==='busy'?'disabled':''} aria-label="${d[0]} ${d[1]}">${d[0]}<b>${d[1]}</b>${st==='pub'?'Publicada':st==='busy'?'Fija':st==='sel'?'Elegida':'Libre'}</button>`}).join('')}</div>
+  <div class="legend"><span><i style="background:var(--sunk)"></i>Programación fija</span><span><i style="border:1px solid var(--line)"></i>Libre</span><span><i style="background:var(--accent)"></i>Abierta a artistas</span></div>
+  <button class="btn pri" data-a="pubfechas" ${sel?'':'disabled'}>${sel?`Publicar ${sel} fecha${sel>1?'s':''}`:'Toca una fecha libre para abrirla'}</button>
+  <div class="note">${ic('cal')} Sincronizado con tu sistema de reservas: las fechas ocupadas se bloquean solas.</div></div>
+ <div class="card"><span class="t">Qué programación buscas</span><div class="chips">${Object.keys(S.prog).map(p=>`<button class="chip" data-a="prog" data-v="${p}" aria-pressed="${!!S.prog[p]}">${p}</button>`).join('')}</div></div>`;
+}
+function postulaciones(){
+ const picked=Object.keys(S.pick).filter(k=>S.pick[k]);
+ return `${title('Circuito Cultural Abierto','Postulaciones · Vie 7 nov','Elige hasta 3 para compararlas lado a lado')}
+ ${APPS.map(p=>{const on=!!S.pick[p.id],c=S.conf===p.id;return `<div class="card"><div class="row">
+  <button class="check" role="checkbox" aria-checked="${on}" aria-label="Seleccionar ${p.n}" data-a="pick" data-v="${p.id}">${on?I.check:''}</button>
+  <span class="av">${p.ini}</span><div class="grow"><div class="t" style="font-size:14.5px">${p.n}</div><div class="m">${p.d}</div></div><span class="num">${cop(p.tarifa)}</span></div>
+  <div class="chips">${rate(p.punt)}<span class="chip">~${p.pub} asistentes</span><span class="chip">${p.ev} eventos</span>${c?'<span class="chip ok">Acuerdo enviado</span>':''}</div></div>`}).join('')}
+ <button class="btn dark" data-a="comparar" ${picked.length>=2?'':'disabled'}>${ic('cols')}Comparar ${picked.length?`(${picked.length})`:''}</button>`;
+}
+function eventos(){
+ const c=APPS.find(a=>a.id===S.conf),r=S.ratings.ev1||0;
+ return `${title('Circuito Cultural Abierto','Eventos')}
+ ${c?`<div class="card"><span class="eyebrow">Próximo</span><div class="row"><span class="av">${c.ini}</span><div class="grow"><div class="t">${c.n}</div><div class="m">Vie 7 nov · 8:00 p. m. · ${cop(c.tarifa)}</div></div></div><div class="note">${ic('bell')} Recordatorio automático 48 h antes para ambas partes.</div></div>`
+ :`<div class="card flat empty">${ic('cal')}<span class="m">Aún no hay artista para el viernes 7. Confirma uno en Postulaciones.</span><button class="btn sm" data-a="tab" data-v="postulaciones">Ir a postulaciones</button></div>`}
+ <div class="card"><span class="eyebrow" style="color:var(--muted)">Realizado</span><div class="row"><span class="av">CT</span><div class="grow"><div class="t">Colectivo Tumbao</div><div class="m">Mar 28 oct · Noche de salsa</div></div></div>
+  <div><div class="row sb" style="margin-bottom:6px"><span class="m">Asistencia</span><span class="num">72 de 80</span></div><div class="bar"><i style="width:90%"></i></div></div>
+  <div class="row sb"><span style="font-weight:600;font-size:14px">Califica la experiencia</span>${stars('ev1',r)}</div>
+  ${r?`<button class="btn sm" data-a="toast" data-v="Buscamos artistas similares para el próximo martes">Repetir con un artista similar</button>`:''}</div>`;
+}
+const stars=(k,r)=>`<div class="stars">${[1,2,3,4,5].map(i=>`<button data-a="rate" data-v="${k}:${i}" class="${i<=r?'on':''}" aria-label="${i} estrellas">${I.star}</button>`).join('')}</div>`;
+
+/* ---------- Cliente ---------- */
+function explorar(){
+ const q=S.q.toLowerCase();
+ const list=CAT.filter(c=>(S.catf==='Todas'||c.d===S.catf)&&c.p<=S.budget&&(!q||(c.n+c.d+c.l).toLowerCase().includes(q)));
+ return `${title('ArteDirecto Conecta','Encuentra talento local','Perfiles verificados del Valle de Aburrá')}
+ <div class="field"><input id="q" type="search" placeholder="Buscar por nombre, disciplina o barrio" value="${esc(S.q)}" data-on="q" aria-label="Buscar"></div>
+ <div class="chips">${['Todas','Música','Danza','Artes plásticas'].map(t=>`<button class="chip" data-a="catf" data-v="${t}" aria-pressed="${S.catf===t}">${t}</button>`).join('')}</div>
+ <div class="field"><label for="budget" id="blabel">Precio desde, hasta ${cop(S.budget)}</label><input id="budget" type="range" min="400000" max="3000000" step="100000" value="${S.budget}" data-on="budget"></div>
+ <div class="m">${list.length} artista${list.length===1?'':'s'}</div>
+ ${list.map(c=>`<div class="card"><div class="row"><span class="av">${c.ini}</span><div class="grow"><div class="t" style="font-size:14.5px">${c.n}</div><div class="m">${c.d} · ${c.l}</div></div><div style="text-align:right"><div class="m" style="font-size:11px">desde</div><div class="num">${cop(c.p)}</div></div></div>
+  <div class="row sb"><div class="chips"><span class="chip ok">${I.shield}Verificado</span>${rate(c.r,c.k)}</div><button class="btn sm" data-a="toast" data-v="Invitaste a ${c.n} a cotizar">Invitar a cotizar</button></div></div>`).join('')||`<div class="card flat empty"><span class="m">Nadie coincide con estos filtros. Sube el presupuesto o cambia la disciplina.</span></div>`}`;
+}
+function requerimiento(){
+ const f=S.form,A=ACT[f.act];
+ if(S.reqPub) return `${title('ArteDirecto Conecta · solicitud inversa','Requerimiento publicado')}
+  <div class="card"><div class="t">${A.l}</div><div class="m">${esc(f.lugar)} · ${fdate(f.fecha)} · ${f.pub} asistentes</div><div class="num">${cop(f.min)} – ${cop(f.max)}</div><div class="m">${esc(f.desc)}</div></div>
+  <button class="btn pri" data-a="tab" data-v="propuestas">Ver las 3 propuestas</button><button class="btn" data-a="editreq">Editar requerimiento</button>`;
+ return `${title('ArteDirecto Conecta · solicitud inversa','Cuéntanos qué necesitas','Los artistas te responden con una propuesta en el mismo formato')}
+ <div class="field"><label for="act">Tipo de actividad</label><select id="act" data-on="act">${Object.entries(ACT).map(([k,v])=>`<option value="${k}" ${f.act===k?'selected':''}>${v.l}</option>`).join('')}</select></div>
+ <div class="hint"><b>Referencia:</b> servicios similares en Tarima cuestan entre <span class="num">${cop(A.ref[0])} y ${cop(A.ref[1])}</span>.</div>
+ <div class="two"><div class="field"><label for="fecha">Fecha</label><input id="fecha" type="date" value="${f.fecha}"></div><div class="field"><label for="pub">Asistentes</label><input id="pub" type="number" min="1" value="${f.pub}"></div></div>
+ <div class="field"><label for="lugar">Lugar</label><input id="lugar" type="text" value="${esc(f.lugar)}"></div>
+ <div class="two"><div class="field"><label for="min">Presupuesto mínimo</label><input id="min" type="number" step="50000" value="${f.min}"></div><div class="field"><label for="max">Presupuesto máximo</label><input id="max" type="number" step="50000" value="${f.max}"></div></div>
+ <div class="field"><label for="desc">Detalles</label><textarea id="desc">${esc(f.desc)}</textarea></div>
+ <button class="btn pri" data-a="pubreq">Publicar requerimiento</button>`;
+}
+function fdate(s){const d=new Date(s+'T12:00:00');return isNaN(d)?s:d.toLocaleDateString('es-CO',{day:'numeric',month:'short'})}
+function propuestas(){
+ if(!S.reqPub) return `${title('ArteDirecto Conecta','Propuestas')}<div class="card flat empty">${ic('cols')}<span class="m">Publica un requerimiento y aquí comparas las propuestas en una sola tabla.</span><button class="btn pri sm" data-a="tab" data-v="requerimiento">Publicar requerimiento</button></div>`;
+ const A=ACT[S.form.act],P=A.props,minP=Math.min(...P.map(p=>p.p)),maxR=Math.max(...P.map(p=>p.r));
+ if(S.booked){const p=P[S.chosen],r=S.ratings.cli||0;return `${title('ArteDirecto Conecta','Contratación confirmada')}
+  <div class="card"><div class="row"><span class="av">${p.ini}</span><div class="grow"><div class="t">${p.n}</div><div class="m">${A.l} · ${fdate(S.form.fecha)}</div></div><span class="num">${cop(p.p)}</span></div>
+  <div class="note">${ic('bell')} Recordatorio 3 días antes. El pago se acuerda directo con el artista.</div></div>
+  <div class="card"><span class="t">Después del evento</span><div class="row sb"><span class="m">Califica el servicio</span>${stars('cli',r)}</div>
+  ${r?`<div class="res">${I.check}Tu valoración queda en el historial verificable de ${p.n.split(' ')[0]}</div>`:''}</div>`;}
+ return `${title('ArteDirecto Conecta',`3 propuestas · ${A.l}`,`${fdate(S.form.fecha)} · tu rango ${cop(S.form.min)} – ${cop(S.form.max)}`)}
+ <div class="card" style="padding:4px 4px 10px"><div class="tw"><table class="cmp"><thead><tr><th></th>${P.map(p=>`<th>${p.n}</th>`).join('')}</tr></thead><tbody>
+  <tr><td>Precio</td>${P.map(p=>`<td class="num ${p.p===minP?'best':''}">${cop(p.p)}${p.p>S.form.max?'<br><span class="chip warn" style="margin-top:4px">Sobre tu rango</span>':''}</td>`).join('')}</tr>
+  <tr><td>Duración</td>${P.map(p=>`<td>${p.dur}</td>`).join('')}</tr>
+  <tr><td>Incluye</td>${P.map(p=>`<td>${p.inc}</td>`).join('')}</tr>
+  <tr><td>Valoración</td>${P.map(p=>`<td class="${p.r===maxR?'best':''}">${rate(p.r)}</td>`).join('')}</tr>
+  <tr><td>Trabajos verificados</td>${P.map(p=>`<td class="num">${p.trab}</td>`).join('')}</tr>
+  <tr><td>Respondió en</td>${P.map(p=>`<td>${p.resp}</td>`).join('')}</tr>
+  <tr><td></td>${P.map((p,i)=>`<td><button class="btn pri sm" data-a="elegir" data-v="${i}">Elegir</button></td>`).join('')}</tr>
+ </tbody></table></div></div>
+ <p class="m" style="margin:0">Desliza la tabla para ver todas las columnas.</p>`;
+}
+
+/* ---------- Capas ---------- */
+let toastT;
+function toast(msg){clearTimeout(toastT);const old=layer.querySelector('.toast');old&&old.remove();
+ layer.insertAdjacentHTML('beforeend',`<div class="toast" role="status">${I.check}<span>${esc(msg)}</span></div>`);
+ toastT=setTimeout(()=>{const t=layer.querySelector('.toast');t&&t.remove()},2800);}
+function sheet(html){layer.querySelector('.scrim')?.remove();layer.insertAdjacentHTML('afterbegin',`<div class="scrim" data-a="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`);
+ const f=layer.querySelector('.sheet input,.sheet button');f&&f.focus();}
+function closeSheet(){layer.querySelector('.scrim')?.remove()}
+
+/* ---------- Acciones ---------- */
+const A={
+ role:v=>{S.role=v;S.preview=false;closeSheet();render()},
+ persona:v=>{S.artist=v;S.preview=false;S.playing=false;S.oppf='Todas';render()},
+ tab:v=>{S.tab[S.role]=v;S.preview=false;closeSheet();render()},
+ go:v=>{const[r,p,t]=v.split('|');S.role=r;if(p)S.artist=p;S.tab[r]=t;S.preview=false;S.playing=false;closeSheet();render();document.getElementById('phone').scrollIntoView({behavior:'smooth',block:'nearest'})},
+ reset:()=>{S=fresh();closeSheet();render();toast('Demo reiniciada')},
+ preview:()=>{S.preview=!S.preview;S.playing=false;render()},
+ avail:()=>{S.avail=!S.avail;render(true);toast(S.avail?'Ahora apareces como disponible':'Ocultamos tu disponibilidad')},
+ play:()=>{S.playing=!S.playing;render(true)},
+ toast:v=>toast(v),
+ pdf:()=>{const a=ART[S.artist];sheet(`<div class="eyebrow">Resultado concreto</div><h3 class="h" style="font-size:22px;margin:0">Tu portafolio en PDF</h3>
+  <div class="pdf"><div class="bar2"></div><h4>${a.nombre}</h4><div>${a.rol} · ${a.lugar}</div>
+   <div class="row" style="gap:12px;align-items:flex-start"><div class="grow">${a.svc.map(s=>`<div class="l"><span>${s[0]}</span><span>${s[1]}</span></div>`).join('')}</div><div class="qr" aria-label="Código QR al perfil"></div></div>
+   <div style="color:#6B6172">Perfil verificado en Tarima · escanea el código para ver muestras</div></div>
+  <div class="m num">Portafolio_${a.nombre.replace(/ /g,'_')}.pdf · 2 páginas</div>
+  <div class="note">Listo para adjuntar a convocatorias de estímulos y solicitudes de financiación.</div>
+  <button class="btn pri" data-a="closepdf">Guardar en mis documentos</button>`)},
+ closepdf:()=>{closeSheet();toast('Portafolio guardado en tus documentos')},
+ oppf:v=>{S.oppf=v;render(true)},
+ postular:v=>{S.post[v]=1;render(true);toast('Postulación enviada con tu portafolio')},
+ falta:v=>{const o=OPP.find(x=>x.id===v),miss=o.req.filter(r=>!r[1]).map(r=>r[0]);
+  sheet(`<div class="eyebrow">Requisito pendiente</div><h3 class="h" style="font-size:22px;margin:0">Te falta: ${miss.join(', ')}</h3>
+  <p class="m" style="margin:0">Lo puedes generar ahora con una plantilla y queda guardado para tus próximas postulaciones.</p>
+  <div class="card"><div class="t" style="font-size:14px">${o.t}</div><div class="m">${o.org}</div></div>
+  <button class="btn pri" data-a="completar" data-v="${v}">Generar con plantilla y postularme</button><button class="btn" data-a="close">Ahora no</button>`)},
+ completar:v=>{const o=OPP.find(x=>x.id===v);S.fixed[v]=1;S.post[v]=1;closeSheet();render(true);toast('Requisito listo y postulación enviada')},
+ close:()=>closeSheet(),
+ scrim:(v,el,e)=>{if(e.target===el)closeSheet()},
+ cotizar:v=>{const q=REQS[S.artist].find(x=>x.id===v);
+  sheet(`<div class="eyebrow">ArteDirecto Conecta</div><h3 class="h" style="font-size:22px;margin:0">${q.t}</h3><div class="m">${q.cli} · ${q.d}</div>
+  <div class="hint"><b>Referencia:</b> trabajos similares en Tarima van de <span class="num">${cop(q.ref[0])} a ${cop(q.ref[1])}</span>.</div>
+  <div class="two"><div class="field"><label for="cmin">Desde</label><input id="cmin" type="number" step="50000" value="${q.min}"></div><div class="field"><label for="cmax">Hasta</label><input id="cmax" type="number" step="50000" value="${q.max}"></div></div>
+  <div class="field"><label for="cinc">Qué incluye</label><textarea id="cinc">${q.inc}</textarea></div>
+  <button class="btn pri" data-a="enviarcot" data-v="${v}">Enviar propuesta</button>`)},
+ enviarcot:v=>{const mn=+document.getElementById('cmin').value||0,mx=+document.getElementById('cmax').value||0;
+  if(mx<mn){toast('El valor "hasta" debe ser mayor o igual a "desde"');return}
+  S.cot[v]={min:mn,max:mx};closeSheet();render(true);toast('Propuesta enviada. Te avisamos cuando respondan.')},
+ colab:()=>{S.colab=true;render(true);toast('Mateo ya hace parte de "Quebradas en vivo"')},
+ goal:v=>{S.goal[S.artist]=v;render(true)},
+ mod:v=>{const g=S.goal[S.artist],d=S.done[S.artist]||(S.done[S.artist]={});
+  d[g+v]=!d[g+v];render(true);if(d[g+v])toast('Resultado listo: '+GOALS[g].mods[v][2])},
+ taller:()=>{S.taller=true;render(true);toast('Taller publicado en ArteDirecto Conecta')},
+ day:v=>{const st=S.days[v];if(st==='free')S.days[v]='sel';else if(st==='sel')S.days[v]='free';else if(st==='pub'){toast('Esta fecha ya está abierta a artistas');return}render(true)},
+ pubfechas:()=>{const n=S.days.filter(x=>x==='sel').length;S.days=S.days.map(x=>x==='sel'?'pub':x);render(true);toast(`${n} fecha${n>1?'s':''} abierta${n>1?'s':''}: los artistas ya pueden postularse`)},
+ prog:v=>{S.prog[v]=S.prog[v]?0:1;render(true)},
+ pick:v=>{const n=Object.values(S.pick).filter(Boolean).length;if(!S.pick[v]&&n>=3){toast('Puedes comparar hasta 3 a la vez');return}S.pick[v]=!S.pick[v];render(true)},
+ comparar:()=>{const P=APPS.filter(a=>S.pick[a.id]),maxPub=Math.max(...P.map(p=>p.pub)),maxPu=Math.max(...P.map(p=>p.punt));
+  sheet(`<div class="eyebrow">Comparación lado a lado</div><h3 class="h" style="font-size:22px;margin:0">Vie 7 nov · ${SPACE.n}</h3>
+  <div class="tw"><table class="cmp"><thead><tr><th></th>${P.map(p=>`<th>${p.n}</th>`).join('')}</tr></thead><tbody>
+  <tr><td>Disciplina</td>${P.map(p=>`<td>${p.d}</td>`).join('')}</tr>
+  <tr><td>Tarifa</td>${P.map(p=>`<td class="num">${cop(p.tarifa)}</td>`).join('')}</tr>
+  <tr><td>Público promedio</td>${P.map(p=>`<td class="num ${p.pub===maxPub?'best':''}">~${p.pub}</td>`).join('')}</tr>
+  <tr><td>Puntualidad</td>${P.map(p=>`<td class="${p.punt===maxPu?'best':''}">${rate(p.punt)}</td>`).join('')}</tr>
+  <tr><td>Rider técnico</td>${P.map(p=>`<td>${p.rider}</td>`).join('')}</tr>
+  <tr><td></td>${P.map(p=>`<td><button class="btn pri sm" data-a="acuerdo" data-v="${p.id}">Confirmar</button></td>`).join('')}</tr>
+  </tbody></table></div>`)},
+ acuerdo:v=>{const p=APPS.find(a=>a.id===v);
+  sheet(`<div class="eyebrow">Plantilla de acuerdo</div><h3 class="h" style="font-size:22px;margin:0">${p.n} en ${SPACE.n}</h3>
+  <div class="svc">${[['Fecha','Vie 7 nov · 8:00 p. m.'],['Llegada','6:30 p. m. para prueba de sonido'],['Pago fijo',cop(p.tarifa)],['Taquilla','20 % para el artista'],['Cancelación','Aviso con 48 h o se paga el 50 %'],['Equipo del lugar',SPACE.eq.slice(0,2).join(', ')]].map(r=>`<div><span class="m">${r[0]}</span><span class="num">${r[1]}</span></div>`).join('')}</div>
+  <button class="btn pri" data-a="enviaracuerdo" data-v="${v}">Enviar acuerdo al artista</button><button class="btn" data-a="close">Cancelar</button>`)},
+ enviaracuerdo:v=>{S.conf=v;closeSheet();render(true);toast('Acuerdo enviado. Recordatorio programado 48 h antes.')},
+ rate:v=>{const[k,n]=v.split(':');S.ratings[k]=+n;render(true);toast('Gracias por calificar')},
+ catf:v=>{S.catf=v;render(true)},
+ pubreq:()=>{const g=id=>document.getElementById(id).value;const f={act:g('act'),fecha:g('fecha'),lugar:g('lugar').trim()||'Sin lugar',pub:+g('pub')||0,min:+g('min')||0,max:+g('max')||0,desc:g('desc').trim()};
+  if(f.max<f.min){toast('El presupuesto máximo debe ser mayor o igual al mínimo');return}
+  S.form=f;S.reqPub=true;S.chosen=null;S.booked=false;S.tab.cliente='propuestas';render();toast('Requerimiento publicado. Llegaron 3 propuestas.')},
+ editreq:()=>{S.reqPub=false;S.booked=false;render()},
+ elegir:v=>{const Ac=ACT[S.form.act],p=Ac.props[v];S.chosen=+v;
+  sheet(`<div class="eyebrow">Resumen de condiciones</div><h3 class="h" style="font-size:22px;margin:0">${p.n}</h3>
+  <div class="svc">${[['Actividad',Ac.l],['Fecha',fdate(S.form.fecha)],['Lugar',esc(S.form.lugar)],['Duración',p.dur],['Incluye',p.inc],['Valor',cop(p.p)],['Cancelación','Aviso con 72 h']].map(r=>`<div><span class="m">${r[0]}</span><span style="text-align:right">${r[1]}</span></div>`).join('')}</div>
+  <div class="note">En esta fase el pago se acuerda directo con el artista. La pasarela de pagos integrada llega en la fase 2.</div>
+  <button class="btn pri" data-a="confirmar">Confirmar contratación</button><button class="btn" data-a="close">Seguir comparando</button>`)},
+ confirmar:()=>{S.booked=true;closeSheet();render();toast('Contratación confirmada')}
+};
+document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el||el.disabled)return;const f=A[el.dataset.a];if(f){if(el.dataset.a!=='scrim')e.stopPropagation();f(el.dataset.v,el,e)}});
+document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.on;if(!k)return;
+ if(k==='q'){S.q=e.target.value;render(true);const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}
+ if(k==='budget'){document.getElementById('blabel').textContent='Precio desde, hasta '+cop(+e.target.value)}});
+document.addEventListener('change',e=>{if(e.target.id==='budget'){S.budget=+e.target.value;render(true);document.getElementById('budget').focus();return}
+ if(e.target.id==='act'){const g=id=>document.getElementById(id).value;
+ S.form={...S.form,act:g('act'),fecha:g('fecha'),lugar:g('lugar'),pub:+g('pub'),desc:g('desc'),min:ACT[g('act')].ref[0],max:ACT[g('act')].ref[1]};render(true)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+render();
+</script>
+
+</body></html>
